@@ -26,6 +26,8 @@ public class ThreeFragment extends Fragment implements View.OnClickListener {
     // WebView
     WebView webView;
 
+    private View view;
+
     public ThreeFragment() {
         // Required empty public constructor
     }
@@ -34,7 +36,11 @@ public class ThreeFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_three, container, false);
+        if (view != null) {
+            return view;
+        }
+
+        view = inflater.inflate(R.layout.fragment_three, container, false);
 
         // 1. 사용할 위젯을 가져온다.
         webView = (WebView) view.findViewById(R.id.webView);

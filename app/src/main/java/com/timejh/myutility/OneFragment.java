@@ -20,6 +20,8 @@ public class OneFragment extends Fragment implements View.OnClickListener {
 
     private TextView textView;
 
+    private View view;
+
     public OneFragment() {
         // Required empty public constructor
     }
@@ -28,8 +30,11 @@ public class OneFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_one, container, false);
+        if (view != null) {
+            return view;
+        }
+
+        view = inflater.inflate(R.layout.fragment_one, container, false);
 
         textView = (TextView) view.findViewById(R.id.textView);
         Button buttons[] = new Button[16];

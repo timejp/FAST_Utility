@@ -33,6 +33,8 @@ public class FourFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap map;
     private SupportMapFragment mapFragment;
 
+    private View view;
+
     public FourFragment() {
 
     }
@@ -82,8 +84,11 @@ public class FourFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_four, container, false);
+        if (view != null) {
+            return view;
+        }
+
+        view = inflater.inflate(R.layout.fragment_four, container, false);
 
         mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapView);
         mapFragment.getMapAsync(this);
