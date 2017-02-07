@@ -1,20 +1,37 @@
 package com.timejh.myutility;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final int REQ_CODE = 100;
+
     final int TAB_COUNT = 4;
+
     OneFragment oneFragment;
     TwoFragment twoFragment;
     ThreeFragment threeFragment;
     FourFragment fourFragment;
+
+    private LocationManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +62,68 @@ public class MainActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         // 2. Tab이 변경 되었을 때 페이지를 바꿔주는 리스너
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+
+        //Permission Check
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkPermission();
+        } else {
+            init();
+        }
+    }
+
+    private void init() {
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!isGpsEnable()) { // Gps가 꺼져있는 경우
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("GPS 켜기");
+            builder.setMessage("GPS가 꺼져있습니다\n설정창으로 이동하시겠습니까?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+        }
+    }
+
+    // Gps가 켜져있는지 체크 : 롤리팝 이하 버전에서 체크
+    private boolean isGpsEnable() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // 롤리팝 이상버전에서 체크
+            return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        }
+        String gps = android.provider.Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+        return gps.matches(",*gps.*");
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermission() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            String permArr[] = {android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION};
+            requestPermissions(permArr, REQ_CODE);
+        } else {
+            init();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                init();
+            } else {
+                Toast.makeText(this, "권한을 허용하지 않으면 프로그램을 실행 할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
     }
 
     class PagerAdapter extends FragmentStatePagerAdapter {
@@ -57,13 +136,17 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             Fragment fragment = null;
             switch (position) {
-                case 0: fragment = oneFragment;
+                case 0:
+                    fragment = oneFragment;
                     break;
-                case 1: fragment = twoFragment;
+                case 1:
+                    fragment = twoFragment;
                     break;
-                case 2: fragment = threeFragment;
+                case 2:
+                    fragment = threeFragment;
                     break;
-                case 3: fragment = fourFragment;
+                case 3:
+                    fragment = fourFragment;
                     break;
             }
             return fragment;
