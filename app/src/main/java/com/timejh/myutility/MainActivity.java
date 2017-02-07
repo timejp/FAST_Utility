@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     ThreeFragment threeFragment;
     FourFragment fourFragment;
 
-    private LocationManager manager;
+    LocationManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
