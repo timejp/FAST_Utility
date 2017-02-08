@@ -20,11 +20,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private final int REQ_CODE = 100;
 
+    private final int ONE_FRAGMENT = 0;
+    private final int TWO_FRAGMENT = 1;
+    private final int THREE_FRAGMENT = 2;
+    private final int FOUR_FRAGMENT = 3;
+
     final int TAB_COUNT = 4;
+
+    private List<Integer> viewPagerStacks;
+    private boolean isBackPressed = false;
 
     OneFragment oneFragment;
     TwoFragment twoFragment;
@@ -65,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
         // 2. Tab이 변경 되었을 때 페이지를 바꿔주는 리스너
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
+        // 3. Pager에서 사용할 Listener 추가 등록
+        viewPager.addOnPageChangeListener(pageChangeListener);
+        // 4. Pager의 뒤로가기 처리를 위한 Stack초기화
+        viewPagerStacks = new ArrayList<>();
+        viewPagerStacks.add(ONE_FRAGMENT);// 처음 위치 저장
+
         //Permission Check
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkPermission();
@@ -72,6 +89,26 @@ public class MainActivity extends AppCompatActivity {
             init();
         }
     }
+
+    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            if(!isBackPressed)
+                viewPagerStacks.add(position);
+            else
+                isBackPressed = false;
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
 
     private void init() {
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -107,21 +144,26 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        isBackPressed = true;
         switch (viewPager.getCurrentItem()) {
-            case 0:
-                super.onBackPressed();
+            case ONE_FRAGMENT:
                 break;
-            case 1:
-                super.onBackPressed();
+            case TWO_FRAGMENT:
                 break;
-            case 2:
-                if(!threeFragment.goBack()) { //webView에서 뒤로가기가 가능하면 뒤로가고 없으면 디바이스의 뒤로가기가 된다.
-                    super.onBackPressed();
+            case THREE_FRAGMENT:
+                if (threeFragment.goBack()) { //webView에서 뒤로가기가 가능하면 뒤로가고 없으면 디바이스의 뒤로가기가 된다.
+                    return;
                 }
                 break;
-            case 3:
-                super.onBackPressed();
+            case FOUR_FRAGMENT:
                 break;
+        }
+        if (viewPagerStacks.size() > 1) {
+            int position = viewPagerStacks.get(viewPagerStacks.size() - 2);
+            viewPagerStacks.remove(viewPagerStacks.size() - 1);
+            viewPager.setCurrentItem(position);
+        } else {
+            super.onBackPressed();
         }
     }
 
