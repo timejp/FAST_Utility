@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     ThreeFragment threeFragment;
     FourFragment fourFragment;
 
+    private ViewPager viewPager;
+
     LocationManager manager;
 
     @Override
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("현재위치"));
 
         // Fragment Pager 설정
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
 
         // Adapter설정
         PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager());
@@ -101,6 +103,26 @@ public class MainActivity extends AppCompatActivity {
         }
         String gps = android.provider.Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
         return gps.matches(",*gps.*");
+    }
+
+    @Override
+    public void onBackPressed() {
+        switch (viewPager.getCurrentItem()) {
+            case 0:
+                super.onBackPressed();
+                break;
+            case 1:
+                super.onBackPressed();
+                break;
+            case 2:
+                if(!threeFragment.goBack()) { //webView에서 뒤로가기가 가능하면 뒤로가고 없으면 디바이스의 뒤로가기가 된다.
+                    super.onBackPressed();
+                }
+                break;
+            case 3:
+                super.onBackPressed();
+                break;
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)

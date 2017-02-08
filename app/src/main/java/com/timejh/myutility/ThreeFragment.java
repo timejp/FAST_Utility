@@ -106,11 +106,13 @@ public class ThreeFragment extends Fragment implements View.OnClickListener {
     /**
      * 뒤로가기
      */
-    private void goBack() {
+    public boolean goBack() {
         if (webView.canGoBack()) {
             webView.goBack();
+            return true;
         } else {
-            Toast.makeText(getContext(), "뒤로갈 수 없습니다!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getContext(), "뒤로갈 수 없습니다!", Toast.LENGTH_SHORT).show();
+            return false;
         }
     }
 }
