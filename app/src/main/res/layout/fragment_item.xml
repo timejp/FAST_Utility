@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/id"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="@dimen/text_margin" />
+</LinearLayout>
+
+
+
+
+<!--<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--xmlns:tools="http://schemas.android.com/tools"-->
+<!--android:id="@+id/list"-->
+<!--android:name="com.veryworks.android.myutility.FiveFragment"-->
+<!--android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent"-->
+<!--android:layout_marginLeft="16dp"-->
+<!--android:layout_marginRight="16dp"-->
+<!--app:layoutManager="GridLayoutManager"-->
+<!--tools:context="com.timejh.myutility.FiveFragment"-->
+<!--tools:listitem="@layout/fragment_item" />-->
