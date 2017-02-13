@@ -90,7 +90,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
                 @Override
                 public void onClick(View v) {
                     // 클릭시 큰이미지 보여주기
-                    Intent intent = new Intent(context,DetailActivity.class);
+                    Intent intent = new Intent(context, DetailActivity.class);
                     intent.putExtra("imageUri", imageUri);
                     context.startActivity(intent);
                 }

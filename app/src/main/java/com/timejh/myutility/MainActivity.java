@@ -2,15 +2,12 @@ package com.timejh.myutility;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
@@ -23,15 +20,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.timejh.myutility.dummy.DummyContent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements FiveFragment.OnListFragmentInteractionListener {
-
-    public static final int REQ_CAMERA = 101; // 카메라 요청코드
 
     private final int REQ_CODE = 100;
 
@@ -54,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements FiveFragment.OnLi
     private ViewPager viewPager;
 
     LocationManager manager;
-
-    private Uri fileUri = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,22 +120,6 @@ public class MainActivity extends AppCompatActivity implements FiveFragment.OnLi
 
     }
 
-    @Override
-    public void startCameraCapture() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // 롤리팝 이상 버전에서는 아래 코드를 반영해야 한다.
-        // --- 카메라 촬영 후 미디어 컨텐트 uri 를 생성해서 외부저장소에 저장한다 ---
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ContentValues values = new ContentValues(1);
-            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpg");
-            fileUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        }
-        // --- 여기 까지 컨텐트 uri 강제세팅 ---
-        startActivityForResult(intent, MainActivity.REQ_CAMERA);
-    }
-
     private void init() {
         manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!isGpsEnable()) { // Gps가 꺼져있는 경우
@@ -200,28 +176,6 @@ public class MainActivity extends AppCompatActivity implements FiveFragment.OnLi
             super.onBackPressed();
         }
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case REQ_CAMERA:
-                if (requestCode == REQ_CAMERA && resultCode == RESULT_OK) { // 사진 확인처리됨 RESULT_OK = -1
-                    // 롤리팝 체크
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                        fileUri = data.getData();
-                    }
-                    if (fileUri != null) {
-                        if (fiveFragment != null) {
-                            fiveFragment.addImageData(fileUri.toString());
-                        }
-                    }
-                }
-                break;
-        }
-    }
-
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermission() {
